@@ -23,7 +23,7 @@ function Video(){
 
         //Initializing socket
         socket.current = io.connect('/', {
-            transports: ['websocket'],
+            transports: ['polling','websocket'],
             upgrade: false,
             
             });
