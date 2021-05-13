@@ -34,7 +34,7 @@ function Video(){
             path: '/peerjs',
             host: '/',
             port: '443',
-            secure: true,
+            
         });
 
         //Getting User Name
