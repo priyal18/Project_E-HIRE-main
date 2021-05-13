@@ -22,7 +22,7 @@ function Video(){
     useEffect(() => {
 
         //Initializing socket
-        socket.current = io.connect(process.env.PORT||ip, {
+        socket.current = io.connect(process.env.PORT, {
             transports: ['websocket'],
             upgrade: false,
             secure: true, 
