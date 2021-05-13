@@ -25,14 +25,14 @@ function Video(){
         socket.current = io.connect('https://salty-harbor-48635.herokuapp.com/'||ip, {
             transports: ['websocket'],
             upgrade: false,
-            
+            secure:true,
             });
         console.log(socket.current);
 
         //Initialising Peer
         var peer = new Peer(undefined, {
             path: '/peerjs',
-            host: '/',
+            host: 'https://salty-harbor-48635.herokuapp.com/',
             port: '443',
             
         });
