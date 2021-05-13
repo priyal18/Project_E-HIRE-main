@@ -33,7 +33,8 @@ function Video(){
         var peer = new Peer(undefined, {
             path: '/peerjs',
             host: '/',
-            port: '80'
+            port: '443',
+            secure: true,
         });
 
         //Getting User Name
