@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const request = require("request");
 const app = express();
+const path = require('path');
 const { ExpressPeerServer } = require('peer');
 const server = http.createServer(app);
 const peerServer = ExpressPeerServer(server, {
