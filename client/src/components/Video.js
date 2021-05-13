@@ -22,7 +22,7 @@ function Video(){
     useEffect(() => {
 
         //Initializing socket
-        socket.current = io.connect('https://salty-harbor-48635.herokuapp.com/'||ip, {
+        socket.current = io.connect(ip, {
             transports: ['websocket'],
             upgrade: false,
             secure:true,
@@ -32,8 +32,9 @@ function Video(){
         //Initialising Peer
         var peer = new Peer(undefined, {
             path: '/peerjs',
-            host: 'https://salty-harbor-48635.herokuapp.com/',
+            host: '/',
             port: '443',
+            secure:true,
             
         });
 
