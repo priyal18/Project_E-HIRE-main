@@ -23,6 +23,7 @@ function Video(){
 
         //Initializing socket
         socket.current = io.connect(process.env.PORT||ip, {
+            transports: ['websocket'],
             secure: true, 
             reconnection: true, 
             rejectUnauthorized: false,
