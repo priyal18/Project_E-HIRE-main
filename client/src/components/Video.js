@@ -22,12 +22,10 @@ function Video(){
     useEffect(() => {
 
         //Initializing socket
-        socket.current = io.connect(process.env.PORT, {
+        socket.current = io.connect(process.env.PORT||ip, {
             transports: ['websocket'],
             upgrade: false,
-            secure: true, 
-            reconnection: true, 
-            reconnectionAttempts: 10
+            
             });
         console.log(socket.current);
 
@@ -35,7 +33,7 @@ function Video(){
         var peer = new Peer(undefined, {
             path: '/peerjs',
             host: '/',
-            port: '443'
+            port: '80'
         });
 
         //Getting User Name
