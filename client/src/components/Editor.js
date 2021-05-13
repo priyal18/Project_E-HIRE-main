@@ -24,7 +24,8 @@ int main() {
   const socketRef = useRef();
 
   useEffect(() => {
-    socketRef.current = io.connect("http://localhost:5000");
+    socketRef.current = io.connect("https://salty-harbor-48635.herokuapp.com/",{transports: ['websocket'],
+    upgrade: false,});
 
     socketRef.current.emit("join-room", roomId);
 
