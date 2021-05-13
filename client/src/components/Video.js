@@ -22,7 +22,7 @@ function Video(){
     useEffect(() => {
 
         //Initializing socket
-        socket.current = io.connect(process.env.PORT||'https://salty-harbor-48635.herokuapp.com/', {
+        socket.current = io.connect('https://salty-harbor-48635.herokuapp.com/', {
             transports: ['websocket'],
             upgrade: false,
             
@@ -34,7 +34,7 @@ function Video(){
             path: '/peerjs',
             host: '/',
             port: '443',
-            secure: true,
+            
         });
 
         //Getting User Name
