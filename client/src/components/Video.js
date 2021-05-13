@@ -22,7 +22,7 @@ function Video(){
     useEffect(() => {
 
         //Initializing socket
-        socket.current = io.connect(ip, {
+        socket.current = io.connect(process.env.PORT||ip, {
             secure: true, 
             reconnection: true, 
             rejectUnauthorized: false,
@@ -47,6 +47,7 @@ function Video(){
             console.log('socket connected');
         });
         socket.current.on('user-disconnected', (userID) => {
+
             console.log('user disconnected-- closing peers', userID);
             peers[userID] && peers[userID].close();
             console.log('PEERS');
@@ -73,6 +74,7 @@ function Video(){
                 call.answer(stream);
                 console.log("peers listener set");
                 call.on('stream', (userVideoStream) => {
+                    console.log("call.metadata",call.metadata.id);
                     console.log('user Video Stream data',userVideoStream);
                     createVideo({id:call.metadata.id,stream:userVideoStream });
                 })
@@ -103,7 +105,7 @@ function Video(){
         })
 
         const connectToNewUser = (userData,stream) => {
-            const {userID} = userData;
+            const {userID,ROOM_ID} = userData;
             const call = peer.call(userID,stream ,{metadata: { id:socket.current.myID }});
             console.log("peer.call made for new user");
 
@@ -113,19 +115,19 @@ function Video(){
             })
             call.on('close', () => {
                 console.log('closing new user', userData);
-                removeVideo(userData);
+                removeVideo(userID);
             });
             call.on('error', () => {
                 console.log('peer error ------')
-                removeVideo(userData);
+                removeVideo(userID);
             })
 
-            peers[userData] = call;
+            peers[userID] = call;
         }
         
         const createVideo = (createObj) => {
 
-            console.log("CREATE OBJECT",createObj);
+            console.log("CREATE OBJECT",createObj.id);
 
             if(!VideoContainer[createObj.id]){
                 VideoContainer[createObj.id] = {
@@ -138,13 +140,16 @@ function Video(){
                 const myVideo = document.createElement('video');
 
                 
-                    myVideo.muted = true;
+                   
                 
 
                 console.log(VideoContainer[createObj.id].stream)
                 myVideo.srcObject = VideoContainer[createObj.id].stream;
                 myVideo.id = createObj.id;
-
+                if(socket.current.myID === createObj.id)
+                {
+                    myVideo.muted = true;
+                }
                 console.log(user);
                 myVideo.addEventListener('loadedmetadata',() => {
                     myVideo.play();
@@ -159,7 +164,9 @@ function Video(){
              }
         }
 
-        const removeVideo = (id ) => {
+        const removeVideo = (id) => {
+            console.log("ID",id);
+            
             delete VideoContainer[id];
             console.log("inside remove video");
             const video = document.getElementById(id);
