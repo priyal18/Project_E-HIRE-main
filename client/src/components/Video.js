@@ -6,7 +6,7 @@ import "../css/Video.css";
 
 
 
-let ip = '127.0.0.1:5000';
+var ip = '127.0.0.1:5000';
 let peers = {};
 let myVideoStream;
 
@@ -24,9 +24,9 @@ function Video(){
         //Initializing socket
         socket.current = io.connect(process.env.PORT||ip, {
             transports: ['websocket'],
+            upgrade: false,
             secure: true, 
             reconnection: true, 
-            rejectUnauthorized: false,
             reconnectionAttempts: 10
             });
         console.log(socket.current);
