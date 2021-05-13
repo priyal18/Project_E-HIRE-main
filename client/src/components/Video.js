@@ -22,7 +22,7 @@ function Video(){
     useEffect(() => {
 
         //Initializing socket
-        socket.current = io.connect('https://salty-harbor-48635.herokuapp.com/', {
+        socket.current = io.connect('https://salty-harbor-48635.herokuapp.com/'||ip, {
             transports: ['websocket'],
             upgrade: false,
             
