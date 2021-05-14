@@ -15,6 +15,7 @@ function Video(){
     const { id: ROOM_ID } = useParams();
     let socket = useRef();
     const VideoContainer = {};
+    const userData = {};
 
     console.log(socket);
     console.log(ROOM_ID);
@@ -63,6 +64,14 @@ function Video(){
             video:true,
             audio:true
         }).then(stream => {
+            peer.on('open' , id => {
+                socket.current.myID = id;
+                const userData = {
+                        userID : id, ROOM_ID
+                 }
+                 console.log("userData",userData);
+                socket.current.emit('join-room',userData);
+            })
             myVideoStream = stream;
             createVideo({ id: socket.current.myID, stream });
 
@@ -92,14 +101,7 @@ function Video(){
             })
         })
 
-        peer.on('open' , id => {
-            socket.current.myID = id;
-            const userData = {
-                    userID : id, ROOM_ID
-             }
-             console.log("userData",userData);
-            socket.current.emit('join-room',userData);
-        })
+        
 
         const connectToNewUser = (userData,stream) => {
             const {userID,ROOM_ID} = userData;
