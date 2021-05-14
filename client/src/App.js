@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./components/Home";
 import Join from "./components/Join";
 import Create from "./components/Create";
-//import Editor from "./components/Editor";
+import Editor from "./components/Editor";
 import Video from "./components/Video";
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
           </Route>
           <Route path='/:id'>
             <Video />
-            
+            <Editor/>
           </Route>
         </Switch>
       </Router>
