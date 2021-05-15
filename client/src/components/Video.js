@@ -53,7 +53,7 @@ function Video(){
                 })
             })
         
-            socket.on('user-connected',userId => {
+            socket.current.on('user-connected',userId => {
                 connectToNewUser(userId,stream);
             })
         })
