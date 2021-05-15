@@ -14,7 +14,6 @@ let myVideoStream;
 function Video(){
     const { id: ROOM_ID } = useParams();
     let socket = useRef();
-    const VideoContainer = {};
     const userData = {};
 
     console.log(socket);
@@ -25,6 +24,9 @@ function Video(){
         //Initializing socket
         socket.current = io.connect('https://salty-harbor-48635.herokuapp.com/');
         console.log(socket.current);
+        const videoGrid = document.getElementById('video-grid');
+        const myVideo = document.createElement('video');
+        myVideo.muted = true;
 
         //Initialising Peer
         var peer = new Peer(undefined, {
@@ -32,7 +34,6 @@ function Video(){
             host: '/',
             port: '443',
             secure:true,
-            
         });
 
         //Getting User Name
@@ -40,136 +41,49 @@ function Video(){
         console.log(user);
 
         //Initialising Socket Events
-
-        socket.current.on('connect', () => {
-            console.log('socket connected');
-        });
-        socket.current.on('user-disconnected', (userID) => {
-
-            console.log('user disconnected-- closing peers', userID);
-            peers[userID] && peers[userID].close();
-            console.log('PEERS');
-            removeVideo(userID);
-        });
-        socket.current.on('disconnect', () => {
-            console.log('socket disconnected --');
-        });
-        socket.current.on('error', (err) => {
-            console.log('socket error --', err);
-        });
-
-
-        //Getting Permissions for Video adn Audio and Connecting 
         navigator.mediaDevices.getUserMedia({
             video:true,
             audio:true
         }).then(stream => {
-            peer.on('open' , id => {
-                socket.current.myID = id;
-                const userData = {
-                        userID : id, ROOM_ID
-                 }
-                 console.log("userData",userData);
-                socket.current.emit('join-room',userData);
-            })
             myVideoStream = stream;
-            createVideo({ id: socket.current.myID, stream });
-
-
+            addVideoStream(myVideo,stream);
+        
             peer.on('call' , call => {
                 call.answer(stream);
-                console.log("peers listener set");
-                call.on('stream', (userVideoStream) => {
-                    console.log("call.metadata",call.metadata.id);
-                    console.log('user Video Stream data',userVideoStream);
-                    createVideo({id:call.metadata.id,stream:userVideoStream });
+                const video = document.createElement('video');
+                call.on('stream', userVideoStream => {
+                    addVideoStream(video, userVideoStream);
                 })
-                call.on('close',() => {
-                    console.log('closing peers listeners',call.metadata.id);
-                    removeVideo(call.metadata.id);
-                })
-                call.on('error' , () => {
-                    console.log('error ....peers listener',call.metadata.id);
-                    removeVideo(call.metadata.id);
-                })
-                peers[call.metadata.id] = call;
-            });
-
-            socket.current.on('user-connected',userData => {
-                console.log("connecting new user");
-                connectToNewUser(userData,stream);
+            })
+        
+            socket.current.on('user-connected',userId => {
+                connectToNewUser(userId,stream);
             })
         })
 
         
 
-        const connectToNewUser = (userData,stream) => {
-            const {userID,ROOM_ID} = userData;
-            const call = peer.call(userID,stream ,{metadata: { id:socket.current.myID }});
-            console.log("peer.call made for new user");
+        peer.on('open' , id => {
+            socket.current.emit('join-room',ROOM_ID, id, user);
+        })
+        
+        
 
-            call.on('stream' , (userVideoStream) => {
-                console.log("call.onstream for new user done");
-                createVideo({ id:userData, stream:userVideoStream, userData });
+        const connectToNewUser = (userId,stream) => {
+            console.log("rtnjdr");
+            const call = peer.call(userId,stream)
+            const video = document.createElement('video')
+            call.on('stream' , userVideoStream => {
+                addVideoStream(video, userVideoStream)
             })
-            call.on('close', () => {
-                console.log('closing new user', userData);
-                removeVideo(userID);
-            });
-            call.on('error', () => {
-                console.log('peer error ------')
-                removeVideo(userID);
-            })
-
-            peers[userID] = call;
         }
         
-        const createVideo = (createObj) => {
-
-            console.log("CREATE OBJECT",createObj.id);
-
-            if(!VideoContainer[createObj.id]){
-                VideoContainer[createObj.id] = {
-                    ...createObj,
-                };
-                console.log("VC",VideoContainer);
-
-                const videoGrid = document.getElementById('video-grid');
-                const innerVideoDiv = document.createElement('div');
-                const myVideo = document.createElement('video');
-
-                
-                   
-                
-
-                console.log(VideoContainer[createObj.id].stream)
-                myVideo.srcObject = VideoContainer[createObj.id].stream;
-                myVideo.id = createObj.id;
-                if(socket.current.myID === createObj.id)
-                {
-                    myVideo.muted = true;
-                }
-                console.log(user);
-                myVideo.addEventListener('loadedmetadata',() => {
-                    myVideo.play();
-                })
-
-                innerVideoDiv.appendChild(myVideo);
-                videoGrid.append(innerVideoDiv);
-
-            }
-            else {
-                 document.getElementById(createObj.id).srcObject = createObj.stream;
-             }
-        }
-
-        const removeVideo = (id) => {
-            console.log("ID",id);
-            
-            delete VideoContainer[id];
-            console.log("inside remove video");
-            const video = document.getElementById(id);
-            if(video) video.remove();
+        const addVideoStream = (video,stream) => {
+            video.srcObject = stream;
+            video.addEventListener('loadedmetadata',() => {
+                video.play();
+            })
+            videoGrid.append(video);
         }  
     })
 
