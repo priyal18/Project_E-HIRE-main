@@ -24,7 +24,7 @@ function App() {
           </Route>
           <Route path='/:id'>
             <Video />
-            <Editor/>
+            
           </Route>
         </Switch>
       </Router>
