@@ -24,6 +24,9 @@ function Video(){
         //Initializing socket
         socket.current = io.connect('https://salty-harbor-48635.herokuapp.com/');
         console.log(socket.current);
+        const videoGrid = document.getElementById('video-grid');
+        const myVideo = document.createElement('video');
+        myVideo.muted = true;
 
         //Initialising Peer
         var peer = new Peer(undefined, {
@@ -61,12 +64,9 @@ function Video(){
         
 
         peer.on('open' , id => {
-            const userData = {
-                userId : id, ROOM_ID
-            }
-            socket.current.emit('join-room',userData);
+            socket.current.emit('join-room',ROOM_ID, id, user);
         })
-
+        
         
 
         const connectToNewUser = (userId,stream) => {

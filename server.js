@@ -19,8 +19,8 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 
 
 io.on("connection", (socket) => {
-  socket.on("join-room", (userData) => {
-    const { userId , roomId } = userData;
+  socket.on("join-room", (roomId , userId, userName) => {
+    //const { userId , roomId } = userData;
     socket.join(roomId);
 
     socket.broadcast.to(roomId).emit('user-connected',userId);
