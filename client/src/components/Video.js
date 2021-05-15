@@ -31,7 +31,6 @@ function Video(){
             host: '/',
             port: '443',
             secure:true,
-            
         });
 
         //Getting User Name
@@ -39,25 +38,13 @@ function Video(){
         console.log(user);
 
         //Initialising Socket Events
-
-        socket.current.on('connect', () => {
-            console.log('socket connected');
-        });
-
-        const videoGrid = document.getElementById('video-grid');
-                const innerVideoDiv = document.createElement('div');
-                const myVideo = document.createElement('video');
-
-
-        //Getting Permissions for Video adn Audio and Connecting 
         navigator.mediaDevices.getUserMedia({
             video:true,
             audio:true
         }).then(stream => {
-            
             myVideoStream = stream;
             addVideoStream(myVideo,stream);
-
+        
             peer.on('call' , call => {
                 call.answer(stream);
                 const video = document.createElement('video');
@@ -65,8 +52,8 @@ function Video(){
                     addVideoStream(video, userVideoStream);
                 })
             })
-
-            socket.current.on('user-connected',userId => {
+        
+            socket.on('user-connected',userId => {
                 connectToNewUser(userId,stream);
             })
         })
@@ -75,9 +62,9 @@ function Video(){
 
         peer.on('open' , id => {
             const userData = {
-                userID : id, ROOM_ID
+                userId : id, ROOM_ID
             }
-            socket.current.emit('join-room',ROOM_ID, id, user);
+            socket.current.emit('join-room',userData);
         })
 
         

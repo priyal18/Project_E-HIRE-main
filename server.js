@@ -23,7 +23,7 @@ io.on("connection", (socket) => {
     const { userId , roomId } = userData;
     socket.join(roomId);
 
-    socket.broadcast.to(roomId).emit('user-connected',userData);
+    socket.broadcast.to(roomId).emit('user-connected',userId);
 
     socket.on("codeChanged", (code) => {
       socket.broadcast.to(roomId).emit("codeChanged1", code);
